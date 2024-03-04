@@ -3,7 +3,6 @@ package com.example.diaryapp.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -72,7 +71,7 @@ class DiaryActivity : AppCompatActivity() {
     private lateinit var diaryContentEditText:EditText
     private lateinit var imgFile: File
 
-    @SuppressLint("SetTextI18n", "Recycle", "Range", "InlinedApi")
+    @SuppressLint("SetTextI18n", "Recycle", "Range", "InlinedApi", "CommitPrefEdits", "SdCardPath")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityDiaryBinding.inflate(LayoutInflater.from(this))
@@ -100,6 +99,7 @@ class DiaryActivity : AppCompatActivity() {
                 R.id.deleteButton ->{
                     diaryViewModel.deleteDiary()
                     File(filesDir, diaryViewModel.oneDiary.date).delete()
+                    File("/data/data/$packageName/shared_prefs/${diaryViewModel.oneDiary.date}.xml").delete()
                     finish()}
 
                 R.id.backButton -> finish()
@@ -107,26 +107,18 @@ class DiaryActivity : AppCompatActivity() {
                 R.id.outputButton ->{
                     permissionRequesterPlus(Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.MANAGE_EXTERNAL_STORAGE,
                         Build.VERSION_CODES.TIRAMISU){
-                        val diaryResolver = contentResolver
                         val imgDir = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "diary")
-                        imgFile = File(imgDir, "${diaryViewModel.oneDiary.date}.jpg")
                         if (!imgDir.exists()) imgDir.mkdirs()
 
-                        val uri = if (imgFile.exists()) {
-                            imgFile.delete()
-                            diaryResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, "${MediaStore.Images.Media.DATA}=?", arrayOf(imgFile.absolutePath), null).use {
-                                it?.moveToFirst()
-                                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                    it?.getLong(it.getColumnIndex(MediaStore.Images.Media._ID))!!) }}
-                            else diaryResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentValues().apply {
-                                    put(MediaStore.Images.Media.DISPLAY_NAME, "${diaryViewModel.oneDiary.date}.jpg")
-                                    put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/diary")
-                                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")})!!
+                        val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentValues().apply {
+                            put(MediaStore.Images.Media.DISPLAY_NAME, "${diaryViewModel.oneDiary.date}.jpg")
+                            put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/diary")
+                            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")})!!
 
                         val bitmap = Bitmap.createBitmap(binding.diaryOutLayout.width, binding.diaryOutLayout.height, Bitmap.Config.ARGB_8888)
                         binding.diaryScrollView.draw(Canvas(bitmap).apply { drawColor(Color.WHITE) })
 
-                        diaryResolver.openOutputStream(uri)?.use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)}}}}
+                        contentResolver.openOutputStream(uri)?.use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)}}}}
             true
         }
 
@@ -170,8 +162,7 @@ class DiaryActivity : AppCompatActivity() {
                                             if (imgCode!=null) {
                                                 FileOutputStream(imgFile).use {
                                                     imgCode.compress(Bitmap.CompressFormat.JPEG, 100, it) }
-                                                diaryContentEditText.text.insert(diaryContentEditText.selectionStart,
-                                                    "\n<DiaryApp>${FileProvider.getUriForFile(this@DiaryActivity, "com.example.diaryapp", imgFile)}<DiaryApp>\n")}
+                                                setImg(FileProvider.getUriForFile(this@DiaryActivity, "com.example.diaryapp", imgFile).toString()) }
                                             else Toast.makeText(this@DiaryActivity,"获取失败",Toast.LENGTH_SHORT).show()}})}
                                 .show()}
                         else Toast.makeText(this@DiaryActivity,"获取失败",Toast.LENGTH_SHORT).show()}}
@@ -198,15 +189,10 @@ class DiaryActivity : AppCompatActivity() {
 
         cameraLauncher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK)
-                diaryContentEditText.text.insert(
-                    diaryContentEditText.selectionStart,
-                    "\n<DiaryApp>${FileProvider.getUriForFile(this@DiaryActivity, "com.example.diaryapp", imgFile)}<DiaryApp>\n") }
+                setImg(FileProvider.getUriForFile(this@DiaryActivity, "com.example.diaryapp", imgFile).toString())}
 
         albumLauncher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK && result.data!=null)
-                diaryContentEditText.text.insert(
-                    diaryContentEditText.selectionStart,
-                    "\n<DiaryApp>${result.data!!.data.toString()}<DiaryApp>\n")}
+            if (result.resultCode == RESULT_OK && result.data!=null) setImg(result.data!!.data.toString())}
 
         if(diaryViewModel.mode==0) changeToWatchView()
         else changeToEditView()
@@ -282,7 +268,16 @@ class DiaryActivity : AppCompatActivity() {
                 binding.diaryInLayout.addView(TextView(this).apply { text=i.value })
             else
                 binding.diaryInLayout.addView(ImageView(this).apply {
-                    Glide.with(this@DiaryActivity).load(i.value.toUri()).into(this) }) }
+                    Glide.with(this@DiaryActivity).load(getSharedPreferences(diaryViewModel.oneDiary.date,
+                        MODE_PRIVATE).getString(i.value,"")?.toUri()).into(this) }) }
+
+    private fun setImg(imgUri:String){
+        getSharedPreferences(diaryViewModel.oneDiary.date, MODE_PRIVATE).edit().run {
+            putString("img${diaryViewModel.oneDiary.imgCount}", imgUri)
+            apply()}
+        diaryContentEditText.text.insert(diaryContentEditText.selectionStart,
+            "\n<DiaryApp>${"img${diaryViewModel.oneDiary.imgCount}"}<DiaryApp>\n")
+        diaryViewModel.oneDiary.imgCount+=1 }
 
     private fun changeToWatchView(){
         binding.diaryButtonView.menu.clear()
@@ -299,8 +294,7 @@ class DiaryActivity : AppCompatActivity() {
     }
 
     private fun saveDiary(){
-        diaryViewModel.updateDiary()
-        if (diaryViewModel.mode==1) {
+        if (diaryViewModel.updateDiary() && diaryViewModel.mode==1) {
             diaryViewModel.diaryData=diaryContentEditText.text.toString()
             BufferedWriter(OutputStreamWriter(openFileOutput(diaryViewModel.oneDiary.date, MODE_PRIVATE))).use {
                 it.write(diaryViewModel.diaryData)}}}

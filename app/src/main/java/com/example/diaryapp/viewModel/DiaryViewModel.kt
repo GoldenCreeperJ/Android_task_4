@@ -8,7 +8,7 @@ class DiaryViewModel : ViewModel() {
     private val diaryDao=DiaryDatabase.getDatabase(DiaryApplication.context).diaryDao()
     var adapterDiary= diaryDao.getAllData()
     var allDiary= diaryDao.getAllData()
-    var oneDiary= DiaryEntity("","","","")
+    var oneDiary= DiaryEntity("","","","",0)
     var diaryData=""
     var filterWords=""
     var mode=0
@@ -16,7 +16,7 @@ class DiaryViewModel : ViewModel() {
     fun setOneDiary(date:String){
          if(diaryDao.getOneData(date)!=null) oneDiary =diaryDao.getOneData(date)!!
          else {
-             oneDiary=DiaryEntity("${date}的日记","未知","未知",date)
+             oneDiary=DiaryEntity("${date}的日记","未知","未知",date,0)
              diaryDao.insert(oneDiary)}}
 
     fun setFilteredTitle() {
@@ -27,7 +27,8 @@ class DiaryViewModel : ViewModel() {
         diaryDao.delete(oneDiary)
         allDiary = diaryDao.getAllData()}
 
-    fun updateDiary() {
+    fun updateDiary(): Boolean {
         if(diaryDao.getOneData(oneDiary.date)!=null) diaryDao.update(oneDiary)
-        allDiary = diaryDao.getAllData() }
+        allDiary = diaryDao.getAllData()
+        return diaryDao.getOneData(oneDiary.date)!=null}
 }

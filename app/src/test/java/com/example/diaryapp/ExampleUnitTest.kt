@@ -7,7 +7,7 @@ import java.time.LocalDate
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class A() {
+class A {
     fun a() {
         println(LocalDate.now().toString())
     }
