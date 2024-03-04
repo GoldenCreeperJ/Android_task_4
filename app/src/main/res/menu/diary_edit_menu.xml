@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/finishButton"
+        android:title="@string/finish" />
+    <item
+        android:id="@+id/albumButton"
+        android:title="@string/album" />
+    <item
+        android:id="@+id/cameraButton"
+        android:title="@string/camera" />
+    <item
+        android:id="@+id/internetButton"
+        android:title="@string/internet"/>
+</menu>

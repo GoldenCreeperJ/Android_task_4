@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">DiaryApp</string>
+    <string name="diaryDateText" />
+    <string name="diaryCityText" />
+    <string name="diaryWeatherText"/>
+    <string name="diaryTitleText" />
+    <string name="listFilterText" />
+    <string name="addButton">Press the button to add a new diary</string>
+    <string name="edit">编辑</string>
+    <string name="delete">删除</string>
+    <string name="output">导出</string>
+    <string name="finish">完成</string>
+    <string name="album">相册</string>
+    <string name="camera">相机</string>
+    <string name="internet">网络</string>
+    <string name="back">返回</string>
+    <string name="filterEditText">Filter your diary by title</string>
+    <string name="titleEditText">Write your title</string>
+</resources>

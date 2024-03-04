@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/editButton"
+        android:title="@string/edit" />
+    <item
+        android:id="@+id/deleteButton"
+        android:title="@string/delete" />
+    <item
+        android:id="@+id/outputButton"
+        android:title="@string/output" />
+    <item
+        android:id="@+id/backButton"
+        android:title="@string/back" />
+</menu>
