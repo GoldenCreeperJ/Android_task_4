@@ -19,6 +19,7 @@ abstract class DiaryDatabase: RoomDatabase() {
             }
             return Room.databaseBuilder(context.applicationContext,
                 DiaryDatabase::class.java,"DiaryDataBase")
+                .allowMainThreadQueries()
                 .build().apply { instance=this }
         }
     }
