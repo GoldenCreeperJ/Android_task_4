@@ -1,6 +1,7 @@
 package com.example.diaryapp.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.example.diaryapp.DiaryApplication
 import com.example.diaryapp.diaryRoom.DiaryDatabase
 import com.example.diaryapp.diaryRoom.DiaryEntity
 

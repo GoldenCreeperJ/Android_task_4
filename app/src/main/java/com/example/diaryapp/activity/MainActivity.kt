@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.diaryapp.databinding.ActivityMainBinding
 import com.example.diaryapp.recycleView.DiaryItemMargin
 import com.example.diaryapp.recycleView.DiaryListAdapter
-import com.example.diaryapp.viewModel.DiaryApplication
+import com.example.diaryapp.DiaryApplication
 import com.example.diaryapp.viewModel.DiaryViewModel
 import java.time.LocalDate
 
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(),DiaryListAdapter.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
-        diaryViewModel=DiaryApplication.diaryViewModel
+        diaryViewModel= DiaryApplication.diaryViewModel
         setContentView(binding.root)
 
         binding.diaryList.layoutManager=LinearLayoutManager(this)

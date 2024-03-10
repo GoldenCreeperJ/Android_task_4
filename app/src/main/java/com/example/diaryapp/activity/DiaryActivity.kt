@@ -35,12 +35,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import com.bumptech.glide.Glide
+import com.example.diaryapp.DiaryApplication
 import com.example.diaryapp.R
 import com.example.diaryapp.databinding.ActivityDiaryBinding
 import com.example.diaryapp.diaryRetrofit.CityItem
 import com.example.diaryapp.diaryRetrofit.DiaryRetrofit
 import com.example.diaryapp.diaryRetrofit.WeatherItem
-import com.example.diaryapp.viewModel.DiaryApplication
 import com.example.diaryapp.viewModel.DiaryViewModel
 import com.google.android.material.navigation.NavigationBarView
 import okhttp3.ResponseBody
