@@ -12,6 +12,6 @@ class DiaryItemMargin:RecyclerView.ItemDecoration() {
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        outRect.bottom=10
+        outRect.bottom = 10
     }
 }

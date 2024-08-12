@@ -8,7 +8,7 @@ import com.example.diaryapp.viewModel.DiaryViewModel
 
 class DiaryApplication: Application() {
 
-    companion object{
+    companion object {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
         lateinit var diaryViewModel: DiaryViewModel
@@ -16,7 +16,8 @@ class DiaryApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        context =applicationContext
-        diaryViewModel =ViewModelProvider.AndroidViewModelFactory(this).create(DiaryViewModel::class.java)
+        context = applicationContext
+        diaryViewModel =
+            ViewModelProvider.AndroidViewModelFactory(this).create(DiaryViewModel::class.java)
     }
 }

@@ -19,8 +19,8 @@ interface DiaryDao {
     fun delete(diaryEntity: DiaryEntity)
 
     @Query("select * from DiaryEntity")
-    fun getAllData():List<DiaryEntity>
+    fun getAllData(): List<DiaryEntity>
 
     @Query("select * from DiaryEntity where date = :date")
-    fun getOneData(date: String):DiaryEntity?
+    fun getOneData(date: String): DiaryEntity?
 }
